@@ -3,7 +3,7 @@ Spring Boot-based microservices
 
 ## Project Intro
 
-Currency_Exchanger is a Spring Boot-based microservices app designed for online currency exchange services, offering a robust, scalable distributed system with high-performance concurrency and comprehensive CI/CD integration. Each microservice operates with its own dedicated database, ensuring data isolation and consistency. **Eureka** is employed for dynamic service discovery, while **RabbitMQ** ensures reliable and asynchronous messaging between services.
+Personal Finance Tracker is a Spring Boot-based microservices app designed  to help users manage their finances by tracking income, expenses, budgets, and savings goals, with real-time reports and notifications., offering a robust, scalable distributed system with high-performance concurrency and comprehensive CI/CD integration. Each microservice operates with its own dedicated database, ensuring data isolation and consistency. **Eureka** is employed for dynamic service discovery, while **RabbitMQ** ensures reliable and asynchronous messaging between services.
 
 External requests are managed by **Spring Cloud Gateway**, providing intelligent routing and load balancing. **Zipkin** is integrated for distributed tracing, offering deep insights into the system's performance and latency. **Spring Cloud Config** centralizes the management of configuration properties across the microservices, enhancing consistency and flexibility. And load balancing with **Spring Cloud LoadBalancer**.
 
