@@ -9,13 +9,13 @@ External requests are managed by **Spring Cloud Gateway**, providing intelligent
 
 To ensure resilience, **Resilience4J** introduces fault tolerance patterns, such as circuit breakers and rate limiters, safeguarding against cascading failures. **Spring Security** is implemented to provide robust authentication and authorization mechanisms, protecting sensitive exchange operations.
 
-The application is containerized using **Docker** and deployed on **Kubernetes** for scalable orchestration and management.Prometheus and Grafana are integrated for monitoring, allowing for real-time tracking of system health and performance metrics.
+The application is containerized using **Docker** and deployed on **AWS** for scalable orchestration and management.
 
 Docker Hub Repository: [docker](https://hub.docker.com/repository/docker/cici000/online_converter/general)
 
 ## Tech Involved
 Programming and Frameworks: Java, Spring Boot, Spring MVC, Microservice <br>
-Tools and Test: SQL, Hibernate, JPA, Actuator, Docker, Kubernetes, RabbitMQ, Eureka, API Gateway, Resilience4J, Github, Zipkin, Postman, Micrometer, OpenTelemetry, AWS, EC2
+Tools and Test: SQL, Hibernate, JPA, Actuator, Docker, RabbitMQ, Eureka, API Gateway, Resilience4J, Github, Zipkin, Postman, Micrometer, OpenTelemetry, AWS, EC2
 
 
 ## PrePared
@@ -65,7 +65,7 @@ To create a place to put all the configurations for all the microservices' envir
 For better git control, we could create a git-localconfig-repo folder to store our configurations.<br>
 e.g.: I created different environments for limits-service:<br>
 <img width="300" alt="Screenshot 2024-08-01 at 5 13 27 PM" src="https://github.com/user-attachments/assets/aec288ea-b182-49a4-bb48-e606e41df6ae"><br>
-Later we can write the configurations in the Spring Cloud Config Server's application.properties(here I'm using this, application.yaml might be differ):<br>
+Later we can write the configurations in the Spring Cloud Config Server's application.properties(here I'm using this, application.yaml might differ):<br>
 `spring.cloud.config.server.git.uri=file:///{absolute file path for 'git-localconfig-repo folder'}`<br>
 Then when you make changes to the configurations locally later, you can git this.
 
@@ -79,7 +79,7 @@ Prerequisite: Download Zipkin first<br>
 Add(this line of code in each application.properties in the application you want to trace), then you can trace<br>
 `management.tracing.sampling.probability=1.0` 
 
-**! You have to run zipking while run your application<br>**
+**! You have to run Zipkin while running your application<br>**
 make sure docker is running zipKin!<br>
 `docker run -p 9411:9411 openzipkin/zipkin`
 
@@ -99,7 +99,7 @@ And sets up an in-memory H2 database named testdb. The database exists only whil
 
 ### 6. What is Spring Cloud Gateway?
 features:
-- match routes on any request attribute
+- match routes on any requested attribute
 - define Predicates and Filters
 - Integrates with Spring Cloud Discovery Client (Load Balancing)
 - Path Rewriting
