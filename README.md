@@ -114,6 +114,11 @@ features:
 - Path Rewriting
 
 ### 7. What is Resilience4J?
+- **Circuit Breaker**:
+    - Implements the circuit breaker pattern to prevent repetitive calls to a failing service. It monitors the number of failures and, once a threshold is reached, opens the circuit to stop further calls until the service recovers.
+- **Rate Limiter**:
+    - Controls the rate at which requests are allowed to be processed, preventing system overload by limiting the number of calls within a specified time period.
+<img width="601" alt="Screenshot 2024-08-01 at 11 02 39 PM" src="https://github.com/user-attachments/assets/9915bf2e-2983-4088-bf12-7b8eaea3e140">
 
 ### 8. Build the Docker
 run the Maven command to build docker
