@@ -100,8 +100,123 @@ And sets up an in-memory H2 database named testdb. The database exists only whil
 ### 6. What is Spring Cloud Gateway?
 features:
 - match routes on any requested attribute
-- define Predicates and Filters
+- Define predicates and Filters
 - Integrates with Spring Cloud Discovery Client (Load Balancing)
+  Integration with Service Discovery: Spring Cloud Gateway integrates with service discovery systems like 
+  Eureka, allowing it to automatically route requests to available instances of a service, with client-side 
+  load balancing via Spring Cloud LoadBalancer.
+- Security
+  Authentication and Authorization: Spring Cloud Gateway can be integrated with Spring Security to handle     
+  authentication and authorization at the gateway level. This centralizes security concerns and simplifies 
+  the implementation of security across microservices.
+- Resilience and Fault Tolerance
+  Circuit Breakers: You can integrate Spring Cloud Gateway with resilience libraries like Resilience4J to apply circuit breakers, timeouts, retries, and bulkhead patterns to routes, improving the resilience of your system.
 - Path Rewriting
+
+### 7. What is Resilience4J?
+
+### 8. Build the Docker
+run the Maven command to build docker
+`./mvnw spring-boot:build-image -DskipTests` <br>
+it is a convenient way to build a Docker image for your Spring Boot application using the built-in support provided by Spring Boot. This command leverages Cloud Native Buildpacks to create a Docker image without needing a `Dockerfile`.
+
+if you use this command to build docker image, then when you want to use it in other devices/networks, you have to tag this docker image into your docker hub; otherwise, this local docker image can’t be accessed.
+### !format matters, use space instead of tabs
+
+### 9. Deploy
+First, create a FREE AWS accout
+-1. Create a VPC
+-2. Create EC2
+- Before creating EC2, I will upload SSH key to AWS. This will let me to connect to my EC2 instance later via SSH. <br>
+   1.  **Create Security Group ** (to block ports I don’t need) <br>
+        To access my instance, I need the port 22 for an SSH connection and the port 8080 as the default port of my Spring Boot application.  <br>
+        On the other way, I have no restrictions for the outgoing connections. I let my instance to connect to any external port, all the internet. <br>
+    The insurance type will impact on the cost of my instance. I want to stay on the free tier, so I choose the t2.micro. <br>
+
+2. **install Java** (Java —version to check if it’s downloaded) <br>
+download file on local machine(mac) to EC2 <br>
+3. **get your own ssh key**(remember to go to the file to see the key` <br>cat ~/.ssh/id_rsa.pub`<br>
+4. **Launch an EC2 Instance**: If you haven’t already, launch an EC2 instance with an appropriate Amazon Machine Image (AMI) such as Amazon Linux 2 or Ubuntu.<br>
+5. **Connect to Your EC2 Instance**: Use SSH to connect to your instance.
+  `ssh -i your-key.pem ec2-user@your-ec2-instance-ip`<br>
+6. **install Docker**
+  `sudo amazon-linux-extras install docker
+sudo service docker start
+sudo usermod -aG docker ec2-user`<br>
+7. **Install Docker Compose**:
+    ```bash
+    sudo curl -L "<https://github.com/docker/compose/releases/download/$>(curl -s <https://api.github.com/repos/docker/compose/releases/latest> | grep tag_name | cut -d '"' -f 4)/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+    ```
+    Verify Docker Compose installation:
+    ```bash
+    docker-compose --version
+    ```
+8. **Use SCP to Transfer Files**:<br> If you have a local directory with your applications and docker-compose.yaml, use scp to transfer it to your EC2 instance.<br>
+***error happens:
+Warning: Identity file /home/ec2-user/Users/caipeng/.ssh/id_rsa not accessible: No such file or directory.<br>
+Solutions: <br>
+Need to copy local project to EC2<br>
+`scp -i your-key.pem -r /path/to/your/folder ec2-user@your-ec2-instance-ip:/home/ec2-user/r`<br>
+9. **Deploy Using Docker Compose**
+ **Navigate to the Directory**:
+    
+    ```bash
+    cd /home/ec2-user/your-folder
+    
+    ```
+    
+10. **Start Your Applications**:
+    ```
+    bash
+    docker-compose up -d
+    ```
+    This will start all the services defined in your `docker-compose.yaml` in detached mode.
+11. **Verify Deployment**
+ **Check Running Containers**:<br>
+ `docker ps`
+
+**Your application should run succefully on EC2!**
+
+### 10. CI/CD for later use
+Here comes S3 bucket(Simple Storage Service): (where to upload all the new versions)<br>
+when a new version of the application is ready, is tested and packaged, I want to be automatically deployed in a new EC2 instance.<br>
+
+I will use User Data Script in EC2 instance<br>
+I will add a script which will download the new version of the application and start it.<br>
+e.g.: So at the end of my pipeline, when my package is created, I will upload it to S3. Then start EC2 instance<br>
+The bucket name must be unique all around the world.<br>
+
+So, create a download script: (which downloads the latest version from S3 and start the application)<br>
+<img width="477" alt="Screenshot 2024-08-01 at 10 59 51 PM" src="https://github.com/user-attachments/assets/d7065a9d-df87-4841-b717-a58bdffb8aba">
+
+use ASW command(AWS-cli)<br>
+`#!/bin/bash
+cd /home/ec2-user
+aws s3 cp s3://my-bucket/demo-0.0.1-SNAPTHOT.jar.
+java -jar demo-0.0.1-SNAPTHOT.jar`<br>
+give this authority<br>
+`chmod +x startup.sh`<br>
+
+compile the project to obtain a new package:<br>
+`mvn clean package`<br>
+
+upload package to S3:<br>
+`aws s3 cp target/demo-0.0.1-SNAPTHOT.jar  s3://my-bucket/demo-0.0.1-SNAPTHOT.jar `
+
+### Variables
+IMAGE_ID="ami-0abcdef1234567890"  # Replace with your AMI ID<br>
+INSTANCE_TYPE="t2.micro"           # Replace with your instance type<br>
+KEY_NAME="your-key-pair"           # Replace with your key pair name<br>
+SECURITY_GROUP="sg-0123456789abcdef0"  # Replace with your security group ID<br>
+SUBNET_ID="subnet-0abc1234"        # Replace with your subnet ID<br>
+COUNT=1                           # Number of instances to launch<br>
+
+### Launch the EC2 instance
+  `aws ec2 run-instances --image-id {your AMI ID} --instance-type {your instance type} --key-name {key pair name} \
+    --security-group-ids {your security group ID} --subnet-id {your subnet ID} --count {count you want to initialize} \
+    --user-data {place the startup.sh is} --associate-public-ip-address {}`
+
+  Finally, from CI/CD runner, I’ve packaged my application, uploaded it to S3, and started a new EC2 instance
 
 
