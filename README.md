@@ -1,5 +1,5 @@
 # Online Currency_Converter
-**Spring Boot-based Microservices**
+**Spring Boot-based Microservices & Deploy on AWS**
 
 ## Project Intro
 
@@ -121,22 +121,27 @@ features:
 <img width="601" alt="Screenshot 2024-08-01 at 11 02 39 PM" src="https://github.com/user-attachments/assets/9915bf2e-2983-4088-bf12-7b8eaea3e140">
 
 ### 8. Build the Docker
-run the Maven command to build docker
+Run the Maven command to build the docker
 `./mvnw spring-boot:build-image -DskipTests` <br>
 it is a convenient way to build a Docker image for your Spring Boot application using the built-in support provided by Spring Boot. This command leverages Cloud Native Buildpacks to create a Docker image without needing a `Dockerfile`.
 
-if you use this command to build docker image, then when you want to use it in other devices/networks, you have to tag this docker image into your docker hub; otherwise, this local docker image can’t be accessed.
+if you use this command to build a docker image, then when you want to use it in other devices/networks, you have to tag this docker image into your docker hub; otherwise, this local docker image can’t be accessed.
 ### !format matters, use space instead of tabs
 
-### 9. Deploy
-First, create a FREE AWS accout
+### 9. Write the docker-compose.yaml
+When we want to manage multi-container Docker applications, we need this tool. It simplifies the process of orchestrating multiple Docker containers, services, networks, and volumes by specifying everything in a single YAML file. Docker Compose takes care of starting, stopping, and managing the lifecycle of these containers together.
+<img width="743" alt="Screenshot 2024-08-01 at 11 27 49 PM" src="https://github.com/user-attachments/assets/06ea2fcc-2930-46c1-b8f6-5658a1c2a3ee">
+<img width="685" alt="Screenshot 2024-08-01 at 11 27 57 PM" src="https://github.com/user-attachments/assets/32f856a9-3135-4438-a8f5-3c04f0c5fe06">
+
+### 10. Deploy
+First, create a FREE AWS account
 -1. Create a VPC
 -2. Create EC2
-- Before creating EC2, I will upload SSH key to AWS. This will let me to connect to my EC2 instance later via SSH. <br>
+- Before creating EC2, I will upload the SSH key to AWS. This will let me connect to my EC2 instance later via SSH. <br>
    1.  **Create Security Group ** (to block ports I don’t need) <br>
-        To access my instance, I need the port 22 for an SSH connection and the port 8080 as the default port of my Spring Boot application.  <br>
-        On the other way, I have no restrictions for the outgoing connections. I let my instance to connect to any external port, all the internet. <br>
-    The insurance type will impact on the cost of my instance. I want to stay on the free tier, so I choose the t2.micro. <br>
+        To access my instance, I need port 22 for an SSH connection and port 8080 as the default port of my Spring Boot application.  <br>
+        On the other way, I have no restrictions for the outgoing connections. I let my instance connect to any external port, all the internet. <br>
+    The insurance type will impact the cost of my instance. I want to stay on the free tier, so I choose the t2.micro. <br>
 
 2. **install Java** (Java —version to check if it’s downloaded) <br>
 download file on local machine(mac) to EC2 <br>
@@ -181,21 +186,21 @@ Need to copy local project to EC2<br>
  **Check Running Containers**:<br>
  `docker ps`
 
-**Your application should run succefully on EC2!**
+**Your application should run successfully on EC2!**
 
 ### 10. CI/CD for later use
 Here comes S3 bucket(Simple Storage Service): (where to upload all the new versions)<br>
-when a new version of the application is ready, is tested and packaged, I want to be automatically deployed in a new EC2 instance.<br>
+when a new version of the application is ready, tested, and packaged, I want it to be automatically deployed in a new EC2 instance.<br>
 
 I will use User Data Script in EC2 instance<br>
 I will add a script which will download the new version of the application and start it.<br>
 e.g.: So at the end of my pipeline, when my package is created, I will upload it to S3. Then start EC2 instance<br>
 The bucket name must be unique all around the world.<br>
 
-So, create a download script: (which downloads the latest version from S3 and start the application)<br>
+So, create a download script: (which downloads the latest version from S3 and starts the application)<br>
 <img width="477" alt="Screenshot 2024-08-01 at 10 59 51 PM" src="https://github.com/user-attachments/assets/d7065a9d-df87-4841-b717-a58bdffb8aba">
 
-use ASW command(AWS-cli)<br>
+use ASW command(AWS-CLI)<br>
 `#!/bin/bash
 cd /home/ec2-user
 aws s3 cp s3://my-bucket/demo-0.0.1-SNAPTHOT.jar.
