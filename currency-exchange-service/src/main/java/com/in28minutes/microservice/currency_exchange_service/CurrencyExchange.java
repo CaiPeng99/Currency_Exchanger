@@ -16,12 +16,14 @@ public class CurrencyExchange {
     private String to;
     private BigDecimal conversionMultiple;
     private String environment;
+    private String in_country;
 
-    public CurrencyExchange(Long id, String from, String to, BigDecimal conversionMultiple) {
+    public CurrencyExchange(Long id, String from, String to, BigDecimal conversionMultiple, String country) {
         this.id = id;
         this.from = from;
         this.to = to;
         this.conversionMultiple = conversionMultiple;
+        this.in_country = country;
     }
 
     public CurrencyExchange() {
@@ -41,6 +43,14 @@ public class CurrencyExchange {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getCountry() {
+        return in_country;
+    }
+
+    public void setCountry(String country) {
+        this.in_country = country;
     }
 
     public String getFrom() {

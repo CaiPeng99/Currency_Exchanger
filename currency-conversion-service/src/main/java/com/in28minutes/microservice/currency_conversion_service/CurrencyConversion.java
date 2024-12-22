@@ -6,12 +6,13 @@ public class CurrencyConversion {
     private Long id;
 
     private String from;
-
     private String to;
     private BigDecimal conversionMultiple;
     private BigDecimal quantity;
+//    private String country;
 
     public CurrencyConversion(Long id, String from, String to, BigDecimal conversionMultiple, BigDecimal quantity, BigDecimal totalCalculateAmount, String environment) {
+//        this.country = country;
         this.id = id;
         this.from = from;
         this.to = to;
@@ -19,10 +20,19 @@ public class CurrencyConversion {
         this.quantity = quantity;
         this.totalCalculateAmount = totalCalculateAmount;
         this.environment = environment;
+
     }
 
     public CurrencyConversion() {
     }
+
+//    public String getCountry() {
+//        return country;
+//    }
+//
+//    public void setCountry(String country) {
+//        this.country = country;
+//    }
 
     public Long getId() {
         return id;

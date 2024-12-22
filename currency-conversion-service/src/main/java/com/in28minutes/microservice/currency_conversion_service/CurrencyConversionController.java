@@ -35,20 +35,26 @@ public class CurrencyConversionController {
             @PathVariable String from,
             @PathVariable String to,
             @PathVariable BigDecimal quantity
-            ){
+    ) {
+
         HashMap<String, String> uriVariables = new HashMap<>();
-        uriVariables.put("from", from);
-        uriVariables.put("to", to);
-        ResponseEntity<CurrencyConversion> responseEntity = restTemplate.getForEntity(
-                "http://localhost:8000/currency-exchange/from/{from}/to/{to}",
-                CurrencyConversion.class, uriVariables);
+        uriVariables.put("from",from);
+        uriVariables.put("to",to);
+
+        ResponseEntity<CurrencyConversion> responseEntity = restTemplate.getForEntity
+                ("http://localhost:8000/currency-exchange/from/{from}/to/{to}",
+                        CurrencyConversion.class, uriVariables);
+
         CurrencyConversion currencyConversion = responseEntity.getBody();
+
         return new CurrencyConversion(currencyConversion.getId(),
                 from, to, quantity,
                 currencyConversion.getConversionMultiple(),
                 quantity.multiply(currencyConversion.getConversionMultiple()),
-                currencyConversion.getEnvironment() + " " + "rest template");
+                currencyConversion.getEnvironment()+ " " + "rest template");
+
     }
+
 
     @GetMapping("/currency-conversion-feign/from/{from}/to/{to}/quantity/{quantity}")
     public CurrencyConversion calculateCurrencyConversionFeign(
@@ -62,6 +68,6 @@ public class CurrencyConversionController {
                 from, to, quantity,
                 currencyConversion.getConversionMultiple(),
                 quantity.multiply(currencyConversion.getConversionMultiple()),
-                currencyConversion.getEnvironment() + " " + "feign");
+                currencyConversion.getEnvironment()+ " " + "rest template");
     }
 }

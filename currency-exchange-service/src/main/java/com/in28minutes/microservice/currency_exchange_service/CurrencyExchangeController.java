@@ -21,7 +21,8 @@ public class CurrencyExchangeController {
     @GetMapping("/currency-exchange/from/{from}/to/{to}")
     public CurrencyExchange retrieveExchangeValue(
             @PathVariable String from,
-            @PathVariable String to){
+            @PathVariable String to
+            ){
         logger.info("retrieveExchangeValue called with {} to {}", from, to);
 //        CurrencyExchange currencyExchange = new CurrencyExchange(1000L, from, to, BigDecimal.valueOf(50));
         CurrencyExchange currencyExchange = repository.findByFromAndTo(from, to);
@@ -30,7 +31,7 @@ public class CurrencyExchangeController {
         }
         String port = environment.getProperty("local.server.port");
         currencyExchange.setEnvironment(port);
-
+//        currencyExchange.setCountry(in_country);
         return currencyExchange;
     }
 
